@@ -6,7 +6,7 @@ import (
 
 func init() {
 	rootCmd.PersistentFlags().StringSliceVarP(&importPaths, flagImportPaths, "I", nil, "proto import paths")
-	rootCmd.PersistentFlags().StringVarP(&protoFile, flagProtoFile, "f", "", "proto file path (required)")
+	rootCmd.PersistentFlags().StringVarP(&protoFile, flagProtoFile, "p", "", "proto file path (required)")
 
 	rootCmd.MarkFlagRequired(flagProtoFile)
 

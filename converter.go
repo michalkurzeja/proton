@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	FormatJSON  = "json"
-	FormatProto = "proto"
-	FormatText  = "text"
+	FormatJSON  Encoding = "json"
+	FormatProto Encoding = "proto"
+	FormatText  Encoding = "text"
 )
 
 // Encoding
@@ -54,8 +54,9 @@ type ConverterConfig struct {
 
 	InputEncoding  Encoding
 	OutputEncoding Encoding
-	Delimiter      byte
 	MessageName    string
+	Delimiter      byte
+	Filter         FilterType
 }
 
 // Converter is a service responsible for converting proto message encoding formats.
@@ -131,6 +132,13 @@ func (c Converter) convert(d *desc.FileDescriptor, b []byte, out io.Writer) erro
 	b, err = Marshal(msg, c.cfg.OutputEncoding)
 	if err != nil {
 		return err
+	}
+
+	if c.cfg.Filter != "" {
+		b, err = Filter(b, c.cfg.Filter)
+		if err != nil {
+			return err
+		}
 	}
 
 	_, err = out.Write(b)

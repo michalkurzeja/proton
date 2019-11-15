@@ -12,8 +12,9 @@ import (
 func init() {
 	convertCmd.Flags().StringVarP(&inputEncoding, flagInputEncoding, "i", "", "input messages encoding [binary, json, text] (required)")
 	convertCmd.Flags().StringVarP(&outputEncoding, flagOutputEncoding, "o", "", "output messages encoding [json, proto, text] (required)")
-	convertCmd.Flags().StringVarP(&delimiter, flagDelimiter, "d", "", "input messages delimiter (0 or 1 characters; if unset, the input is treated as a single message)")
 	convertCmd.Flags().StringVarP(&messageName, flagMessageName, "m", "", "proto message name")
+	convertCmd.Flags().StringVarP(&delimiter, flagDelimiter, "d", "", "input messages delimiter (0 or 1 characters; if unset, the input is treated as a single message)")
+	convertCmd.Flags().StringVarP(&filter, flagFilter, "f", "", "output message filter")
 
 	convertCmd.MarkFlagRequired(flagInputEncoding)
 	convertCmd.MarkFlagRequired(flagOutputEncoding)
@@ -24,20 +25,22 @@ func init() {
 const (
 	flagInputEncoding  = "input-encoding"
 	flagOutputEncoding = "output-encoding"
-	flagDelimiter      = "delimiter"
 	flagMessageName    = "message"
+	flagDelimiter      = "delimiter"
+	flagFilter         = "filter"
 )
 
 // Config values.
 var (
 	inputEncoding  string
 	outputEncoding string
-	delimiter      string
 	messageName    string
+	delimiter      string
+	filter         string
 )
 
 var convertCmd = &cobra.Command{
-	Use:  "convert",
+	Use: "convert",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(delimiter) > 1 {
 			return errors.New("convert: delimiter cannot be longer than 1 character")
@@ -60,8 +63,9 @@ func runConvertCmd(cmd *cobra.Command, args []string) error {
 		},
 		InputEncoding:  proton.Encoding(inputEncoding),
 		OutputEncoding: proton.Encoding(outputEncoding),
-		Delimiter:      delim,
 		MessageName:    messageName,
+		Delimiter:      delim,
+		Filter:         proton.FilterType(filter),
 	}
 
 	converter := proton.NewConverter(cfg)
