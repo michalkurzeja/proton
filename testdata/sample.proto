@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package sample;
+
+import "lib.proto";
+
+message Sample {
+    string value = 1;
+    lib.MyEnum enum = 2;
+    Inner inner = 3;
+}
+
+message Inner {
+    repeated int32 numbers = 1;
+}
